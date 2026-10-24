@@ -1,0 +1,2964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlashBus ⚡</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --yellow:#ffd400;
+    --gold:#ffb300;
+    --blue:#00b7ff;
+    --dark:#050912;
+    --dark2:#091321;
+    --card:rgba(12,24,40,.88);
+    --border:rgba(255,255,255,.12);
+    --text:#ffffff;
+    --muted:#8fa2b8;
+    --green:#25e58b;
+    --red:#ff5272;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at 15% 10%,rgba(255,212,0,.12),transparent 25%),
+        radial-gradient(circle at 85% 20%,rgba(0,183,255,.12),transparent 28%),
+        linear-gradient(135deg,#030711,#071321,#02060d);
+    color:var(--text);
+    min-height:100vh;
+}
+
+/* =========================
+   COMMON
+========================= */
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.container{
+    width:92%;
+    max-width:1150px;
+    margin:auto;
+}
+
+.glass{
+    background:var(--card);
+    border:1px solid var(--border);
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+    backdrop-filter:blur(18px);
+    border-radius:22px;
+}
+
+.primary{
+    background:linear-gradient(135deg,var(--yellow),var(--gold));
+    color:#111;
+    border:none;
+    font-weight:900;
+    padding:14px 20px;
+    border-radius:13px;
+    box-shadow:0 8px 25px rgba(255,196,0,.18);
+}
+
+.primary:hover{
+    transform:translateY(-2px);
+}
+
+.full{
+    width:100%;
+}
+
+.secondary{
+    background:#12243a;
+    color:white;
+    border:1px solid var(--border);
+    padding:11px 15px;
+    border-radius:11px;
+}
+
+.danger{
+    color:#ff7890;
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:24px;
+    font-weight:1000;
+    letter-spacing:1px;
+}
+
+.logo{
+    width:45px;
+    height:45px;
+    border-radius:13px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--yellow),var(--blue));
+    color:#111;
+    font-size:25px;
+    box-shadow:0 0 25px rgba(255,212,0,.25);
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+#loginScreen{
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    padding:20px;
+    position:relative;
+    overflow:hidden;
+}
+
+.lightning{
+    position:absolute;
+    font-size:180px;
+    opacity:.035;
+    animation:float 5s infinite ease-in-out;
+}
+
+.lightning.one{
+    left:5%;
+    top:10%;
+}
+
+.lightning.two{
+    right:5%;
+    bottom:5%;
+    animation-delay:1.5s;
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0) rotate(-5deg)}
+    50%{transform:translateY(-20px) rotate(5deg)}
+}
+
+.login-card{
+    width:min(430px,100%);
+    padding:35px;
+    position:relative;
+    z-index:2;
+}
+
+.login-brand{
+    display:flex;
+    justify-content:center;
+    margin-bottom:30px;
+}
+
+.login-title{
+    text-align:center;
+    font-size:34px;
+    margin-bottom:7px;
+}
+
+.login-sub{
+    text-align:center;
+    color:var(--muted);
+    margin-bottom:28px;
+}
+
+.field{
+    margin-bottom:16px;
+}
+
+.field label{
+    display:block;
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:7px;
+}
+
+.field input,
+.field select{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#071321;
+    color:white;
+    outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+    border-color:var(--yellow);
+    box-shadow:0 0 0 3px rgba(255,212,0,.08);
+}
+
+.demo-text{
+    color:#718399;
+    text-align:center;
+    font-size:12px;
+    margin-top:14px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(3,8,15,.86);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(18px);
+}
+
+.nav{
+    min-height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.nav-buttons{
+    display:flex;
+    gap:5px;
+}
+
+.nav-btn{
+    padding:10px 13px;
+    border-radius:10px;
+    background:transparent;
+    color:var(--muted);
+    border:none;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+    color:white;
+    background:rgba(255,212,0,.09);
+}
+
+.logout{
+    color:#ff718b;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+    padding:30px 0 60px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    padding:38px;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:22px;
+    background:
+        linear-gradient(120deg,rgba(255,212,0,.08),rgba(0,183,255,.08)),
+        var(--card);
+}
+
+.hero h1{
+    font-size:clamp(30px,6vw,54px);
+    margin-bottom:8px;
+}
+
+.hero h1 span{
+    color:var(--yellow);
+}
+
+.hero p{
+    color:var(--muted);
+    max-width:650px;
+}
+
+.hero-symbol{
+    position:absolute;
+    right:35px;
+    bottom:-35px;
+    font-size:150px;
+    opacity:.055;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-card{
+    padding:22px;
+}
+
+.search-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 180px 145px;
+    gap:12px;
+    align-items:end;
+}
+
+.city-box{
+    position:relative;
+}
+
+.swap{
+    position:absolute;
+    right:-22px;
+    bottom:8px;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#10253a;
+    border:1px solid var(--border);
+    color:var(--yellow);
+    z-index:3;
+    font-size:20px;
+}
+
+.search-btn{
+    height:47px;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.section-title{
+    margin:30px 0 15px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.section-title span{
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* =========================
+   BUS CARDS
+========================= */
+
+.bus-list{
+    display:grid;
+    gap:15px;
+}
+
+.bus-card{
+    padding:20px;
+    display:grid;
+    grid-template-columns:1.3fr 1fr .7fr auto;
+    align-items:center;
+    gap:18px;
+    transition:.2s;
+}
+
+.bus-card:hover{
+    transform:translateY(-3px);
+    border-color:rgba(255,212,0,.3);
+}
+
+.bus-name{
+    font-size:18px;
+    font-weight:900;
+}
+
+.bus-type,
+.time{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:5px;
+}
+
+.route{
+    font-weight:800;
+}
+
+.price{
+    font-size:23px;
+    font-weight:1000;
+}
+
+.price small{
+    color:var(--muted);
+    font-size:11px;
+    font-weight:normal;
+}
+
+.book-btn{
+    background:linear-gradient(135deg,var(--yellow),var(--gold));
+    color:#111;
+    font-weight:900;
+    padding:12px 18px;
+    border-radius:11px;
+    border:none;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-top:20px;
+}
+
+.stat{
+    padding:20px;
+}
+
+.stat small{
+    color:var(--muted);
+}
+
+.stat strong{
+    display:block;
+    font-size:28px;
+    margin-top:5px;
+}
+
+/* =========================
+   BOOKINGS
+========================= */
+
+.booking-card{
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:14px;
+}
+
+.booking-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.empty{
+    text-align:center;
+    padding:45px 20px;
+    color:var(--muted);
+}
+
+/* =========================
+   MODALS
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    display:none;
+    place-items:center;
+    padding:18px;
+    background:rgba(0,0,0,.78);
+}
+
+.modal.show{
+    display:grid;
+}
+
+.modal-box{
+    width:min(700px,100%);
+    max-height:92vh;
+    overflow:auto;
+    padding:25px;
+}
+
+.modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.close{
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    font-size:30px;
+}
+
+/* =========================
+   SEATS
+========================= */
+
+.seat-layout{
+    max-width:390px;
+    margin:20px auto;
+    padding:22px;
+    border-radius:22px;
+    background:#050e18;
+    border:1px solid var(--border);
+}
+
+.driver{
+    text-align:center;
+    padding:10px;
+    border-radius:10px;
+    background:#10273e;
+    color:var(--muted);
+    margin-bottom:18px;
+}
+
+.seat-row{
+    display:grid;
+    grid-template-columns:1fr 1fr 25px 1fr 1fr;
+    gap:7px;
+    margin:8px 0;
+}
+
+.seat{
+    height:43px;
+    border-radius:9px;
+    background:#173450;
+    border:1px solid #245274;
+    color:white;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.seat:hover{
+    border-color:var(--yellow);
+}
+
+.seat.selected{
+    background:linear-gradient(135deg,var(--yellow),var(--gold));
+    color:#111;
+    border-color:transparent;
+}
+
+.seat.booked{
+    background:#3c2630;
+    color:#85636e;
+    cursor:not-allowed;
+}
+
+.legend{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:15px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.dot{
+    width:11px;
+    height:11px;
+    display:inline-block;
+    border-radius:3px;
+    background:#173450;
+    margin-right:5px;
+}
+
+.dot.selected{
+    background:var(--yellow);
+}
+
+.dot.booked{
+    background:#3c2630;
+}
+
+/* =========================
+   SUMMARY
+========================= */
+
+.summary{
+    background:#071522;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:15px;
+    margin:15px 0;
+}
+
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin:9px 0;
+    color:var(--muted);
+}
+
+.summary-row strong{
+    color:white;
+}
+
+.summary-row.total{
+    padding-top:10px;
+    border-top:1px solid var(--border);
+    color:white;
+    font-size:19px;
+}
+
+/* =========================
+   FORMS
+========================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+/* =========================
+   TICKET
+========================= */
+
+.ticket{
+    background:white;
+    color:#111;
+    border-radius:18px;
+    padding:25px;
+    max-width:500px;
+    margin:auto;
+}
+
+.ticket .brand{
+    color:#111;
+}
+
+.ticket .logo{
+    color:#111;
+}
+
+.ticket-title{
+    text-align:center;
+    font-size:21px;
+    font-weight:900;
+    margin:22px 0;
+}
+
+.ticket-route{
+    text-align:center;
+    font-size:23px;
+    font-weight:1000;
+    margin:18px 0;
+}
+
+.ticket-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    border-top:1px dashed #aaa;
+    padding-top:17px;
+}
+
+.ticket-grid small{
+    display:block;
+    color:#777;
+    margin-bottom:3px;
+}
+
+.ticket-footer{
+    border-top:1px dashed #aaa;
+    text-align:center;
+    margin-top:18px;
+    padding-top:15px;
+    font-weight:900;
+    color:#1684d5;
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile{
+    max-width:650px;
+    padding:25px;
+}
+
+.avatar{
+    width:70px;
+    height:70px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--yellow),var(--blue));
+    color:#111;
+    font-size:28px;
+    font-weight:1000;
+    margin-bottom:14px;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:100;
+    background:#122b42;
+    border:1px solid var(--border);
+    padding:14px 18px;
+    border-radius:12px;
+    transform:translateY(100px);
+    opacity:0;
+    transition:.3s;
+}
+
+.toast.show{
+    transform:translateY(0);
+    opacity:1;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    text-align:center;
+    color:#66788c;
+    font-size:12px;
+    margin-top:35px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:850px){
+
+    .search-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .search-btn{
+        grid-column:1/-1;
+    }
+
+    .bus-card{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .book-btn{
+        grid-column:1/-1;
+        width:100%;
+    }
+
+    .nav-buttons{
+        overflow-x:auto;
+    }
+
+}
+
+@media(max-width:550px){
+
+    .brand span{
+        display:none;
+    }
+
+    .nav{
+        min-height:65px;
+    }
+
+    .nav-btn{
+        padding:8px;
+        font-size:12px;
+    }
+
+    .hero{
+        padding:25px;
+    }
+
+    .search-grid,
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .search-btn{
+        grid-column:auto;
+    }
+
+    .swap{
+        right:10px;
+    }
+
+    .bus-card{
+        grid-template-columns:1fr;
+    }
+
+    .booking-card{
+        display:block;
+    }
+
+    .booking-actions{
+        margin-top:15px;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .login-card{
+        padding:25px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     LOGIN
+========================= -->
+
+<section id="loginScreen">
+
+    <div class="lightning one">⚡</div>
+    <div class="lightning two">⚡</div>
+
+    <div class="login-card glass">
+
+        <div class="login-brand">
+            <div class="brand">
+                <div class="logo">⚡</div>
+                <span>FLASHBUS</span>
+            </div>
+        </div>
+
+        <h1 class="login-title">FlashBus</h1>
+
+        <p class="login-sub">
+            Book Fast. Travel Easy.
+        </p>
+
+        <form id="loginForm">
+
+            <div class="field">
+                <label>Username</label>
+                <input
+                    id="loginUser"
+                    type="text"
+                    placeholder="Enter username"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Password</label>
+                <input
+                    id="loginPass"
+                    type="password"
+                    placeholder="Enter password"
+                    required
+                >
+            </div>
+
+            <button class="primary full" type="submit">
+                ⚡ LOGIN TO FLASHBUS
+            </button>
+
+        </form>
+
+        <p class="demo-text">
+            Frontend demo • Data is stored in this browser
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     APP
+========================= -->
+
+<div id="app">
+
+<header>
+
+    <div class="container nav">
+
+        <div class="brand">
+            <div class="logo">⚡</div>
+            <span>FLASHBUS</span>
+        </div>
+
+        <div class="nav-buttons">
+
+            <button
+                class="nav-btn active"
+                data-page="home">
+                Home
+            </button>
+
+            <button
+                class="nav-btn"
+                data-page="bookings">
+                Bookings
+            </button>
+
+            <button
+                class="nav-btn"
+                data-page="profile">
+                Profile
+            </button>
+
+            <button
+                class="nav-btn logout"
+                id="logoutBtn">
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+<!-- =========================
+     HOME
+========================= -->
+
+<section class="page active" id="homePage">
+
+    <div class="hero glass">
+
+        <div class="hero-symbol">⚡</div>
+
+        <h1>
+            Travel at the speed of
+            <span>Flash.</span>
+        </h1>
+
+        <p>
+            Search buses, choose your seat and get your
+            FlashBus ticket quickly and easily.
+        </p>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="search-card glass">
+
+        <div class="search-grid">
+
+            <div class="field city-box">
+
+                <label>From</label>
+
+                <input
+                    id="fromCity"
+                    list="cities"
+                    placeholder="Enter departure city"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <button
+                class="swap"
+                id="swapBtn"
+                title="Swap cities">
+                ⇄
+            </button>
+
+
+            <div class="field city-box">
+
+                <label>To</label>
+
+                <input
+                    id="toCity"
+                    list="cities"
+                    placeholder="Enter destination city"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Travel Date</label>
+
+                <input
+                    id="travelDate"
+                    type="date"
+                >
+
+            </div>
+
+
+            <button
+                class="primary search-btn"
+                id="searchBtn">
+                🔎 SEARCH BUSES
+            </button>
+
+        </div>
+
+
+        <datalist id="cities">
+
+            <option value="Trichy">
+            <option value="Chennai">
+            <option value="Coimbatore">
+            <option value="Madurai">
+            <option value="Salem">
+            <option value="Tirunelveli">
+            <option value="Bangalore">
+            <option value="Pondicherry">
+            <option value="Thanjavur">
+            <option value="Kanyakumari">
+            <option value="Erode">
+            <option value="Vellore">
+
+        </datalist>
+
+    </div>
+
+
+    <div class="section-title">
+
+        <h2 id="resultsTitle">
+            Popular Buses
+        </h2>
+
+        <span id="resultCount"></span>
+
+    </div>
+
+
+    <div
+        class="bus-list"
+        id="busList">
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat glass">
+            <small>Buses</small>
+            <strong>24+</strong>
+        </div>
+
+        <div class="stat glass">
+            <small>Routes</small>
+            <strong>50+</strong>
+        </div>
+
+        <div class="stat glass">
+            <small>Support</small>
+            <strong>24/7</strong>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     BOOKINGS
+========================= -->
+
+<section
+    class="page"
+    id="bookingsPage">
+
+    <div class="section-title">
+        <h2>My Bookings</h2>
+    </div>
+
+    <div id="bookingList"></div>
+
+</section>
+
+
+<!-- =========================
+     PROFILE
+========================= -->
+
+<section
+    class="page"
+    id="profilePage">
+
+    <div class="section-title">
+        <h2>My Profile</h2>
+    </div>
+
+    <div class="profile glass">
+
+        <div
+            class="avatar"
+            id="avatar">
+            F
+        </div>
+
+        <h2 id="profileName">
+            FlashBus User
+        </h2>
+
+        <p
+            class="muted"
+            id="profileInfo">
+        </p>
+
+        <br>
+
+        <div class="field">
+
+            <label>
+                Display Name
+            </label>
+
+            <input
+                id="displayName"
+                type="text"
+                placeholder="Your name"
+            >
+
+        </div>
+
+        <button
+            class="primary full"
+            id="saveProfile">
+            SAVE PROFILE
+        </button>
+
+    </div>
+
+</section>
+
+
+<footer>
+    ⚡ FlashBus — Book Fast. Travel Easy.
+</footer>
+
+</main>
+
+</div>
+
+
+<!-- =========================
+     SEAT MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="seatModal">
+
+    <div class="modal-box glass">
+
+        <div class="modal-head">
+
+            <div>
+
+                <h2>
+                    Select Your Seat
+                </h2>
+
+                <p
+                    class="muted"
+                    id="selectedBusInfo">
+                </p>
+
+            </div>
+
+            <button
+                class="close"
+                data-close="seatModal">
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="seat-layout">
+
+            <div class="driver">
+                🛞 DRIVER
+            </div>
+
+            <div id="seatGrid"></div>
+
+            <div class="legend">
+
+                <span>
+                    <i class="dot"></i>
+                    Available
+                </span>
+
+                <span>
+                    <i class="dot selected"></i>
+                    Selected
+                </span>
+
+                <span>
+                    <i class="dot booked"></i>
+                    Booked
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="summary">
+
+            <div class="summary-row">
+
+                <span>
+                    Selected seats
+                </span>
+
+                <strong id="selectedSeatsText">
+                    None
+                </strong>
+
+            </div>
+
+            <div class="summary-row">
+
+                <span>
+                    Price / seat
+                </span>
+
+                <strong id="seatPrice">
+                    ₹0
+                </strong>
+
+            </div>
+
+            <div class="summary-row total">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="seatTotal">
+                    ₹0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="primary full"
+            id="continuePassenger">
+            CONTINUE
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     PASSENGER MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="passengerModal">
+
+    <div class="modal-box glass">
+
+        <div class="modal-head">
+
+            <h2>
+                Passenger Details
+            </h2>
+
+            <button
+                class="close"
+                data-close="passengerModal">
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="passengerForm">
+
+            <div class="form-grid">
+
+                <div class="field">
+
+                    <label>
+                        Passenger Name
+                    </label>
+
+                    <input
+                        id="passName"
+                        required
+                        placeholder="Full name"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Age
+                    </label>
+
+                    <input
+                        id="passAge"
+                        type="number"
+                        min="1"
+                        max="120"
+                        required
+                        placeholder="Age"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Phone Number
+                    </label>
+
+                    <input
+                        id="passPhone"
+                        type="tel"
+                        inputmode="numeric"
+                        maxlength="10"
+                        required
+                        placeholder="10 digit number"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Gender
+                    </label>
+
+                    <select
+                        id="passGender"
+                        required>
+
+                        <option value="">
+                            Select
+                        </option>
+
+                        <option>
+                            Male
+                        </option>
+
+                        <option>
+                            Female
+                        </option>
+
+                        <option>
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="summary"
+                id="passengerSummary">
+            </div>
+
+
+            <button
+                class="primary full"
+                type="submit">
+                ⚡ CONFIRM BOOKING
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     TICKET MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="ticketModal">
+
+    <div class="modal-box glass">
+
+        <div class="modal-head">
+
+            <h2>
+                Your E-Ticket
+            </h2>
+
+            <button
+                class="close"
+                data-close="ticketModal">
+                ×
+            </button>
+
+        </div>
+
+
+        <div id="ticketContent"></div>
+
+        <br>
+
+        <button
+            class="primary full"
+            id="downloadTicket">
+            📥 DOWNLOAD TICKET
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<script>
+
+/* =====================================================
+   FLASHBUS FRONTEND
+===================================================== */
+
+const $ = id => document.getElementById(id);
+
+let currentUser =
+    localStorage.getItem("flashbus_user") || "";
+
+let currentBus = null;
+
+let selectedSeats = [];
+
+let currentTicket = null;
+
+
+/* =====================================================
+   BUS DATA
+===================================================== */
+
+const buses = [
+
+    {
+        id:1,
+        name:"Flash Express",
+        type:"AC Sleeper",
+        from:"Trichy",
+        to:"Chennai",
+        depart:"21:00",
+        arrive:"05:30",
+        price:650
+    },
+
+    {
+        id:2,
+        name:"Yellow Flash",
+        type:"AC Seater",
+        from:"Trichy",
+        to:"Chennai",
+        depart:"20:30",
+        arrive:"05:00",
+        price:550
+    },
+
+    {
+        id:3,
+        name:"Thunder Travels",
+        type:"Non-AC Seater",
+        from:"Trichy",
+        to:"Chennai",
+        depart:"19:00",
+        arrive:"04:30",
+        price:400
+    },
+
+    {
+        id:4,
+        name:"Flash Premium",
+        type:"AC Sleeper",
+        from:"Trichy",
+        to:"Coimbatore",
+        depart:"22:15",
+        arrive:"05:15",
+        price:720
+    },
+
+    {
+        id:5,
+        name:"Lightning Rider",
+        type:"AC Seater",
+        from:"Chennai",
+        to:"Bangalore",
+        depart:"21:45",
+        arrive:"06:30",
+        price:800
+    },
+
+    {
+        id:6,
+        name:"Golden Route",
+        type:"AC Seater",
+        from:"Madurai",
+        to:"Chennai",
+        depart:"20:00",
+        arrive:"05:45",
+        price:700
+    },
+
+    {
+        id:7,
+        name:"Rapid Flash",
+        type:"Non-AC Seater",
+        from:"Salem",
+        to:"Chennai",
+        depart:"22:00",
+        arrive:"04:50",
+        price:450
+    },
+
+    {
+        id:8,
+        name:"Yellow Star",
+        type:"AC Sleeper",
+        from:"Tirunelveli",
+        to:"Chennai",
+        depart:"18:30",
+        arrive:"06:00",
+        price:900
+    },
+
+    {
+        id:9,
+        name:"Kaveri Flash",
+        type:"AC Seater",
+        from:"Thanjavur",
+        to:"Chennai",
+        depart:"21:20",
+        arrive:"05:50",
+        price:600
+    },
+
+    {
+        id:10,
+        name:"Temple Flash",
+        type:"AC Seater",
+        from:"Trichy",
+        to:"Madurai",
+        depart:"07:30",
+        arrive:"10:00",
+        price:350
+    }
+
+];
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function todayISO(){
+
+    const d = new Date();
+
+    return d.toISOString().split("T")[0];
+
+}
+
+$("travelDate").min = todayISO();
+
+$("travelDate").value = todayISO();
+
+
+/* =====================================================
+   STORAGE
+===================================================== */
+
+function getBookings(){
+
+    return JSON.parse(
+        localStorage.getItem(
+            "flashbus_bookings_" + currentUser
+        ) || "[]"
+    );
+
+}
+
+
+function saveBookings(data){
+
+    localStorage.setItem(
+        "flashbus_bookings_" + currentUser,
+        JSON.stringify(data)
+    );
+
+}
+
+
+function getProfile(){
+
+    return JSON.parse(
+        localStorage.getItem(
+            "flashbus_profile_" + currentUser
+        ) || "{}"
+    );
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function toast(message){
+
+    const t = $("toast");
+
+    t.textContent = message;
+
+    t.classList.add("show");
+
+    setTimeout(() => {
+
+        t.classList.remove("show");
+
+    },2400);
+
+}
+
+
+/* =====================================================
+   SHOW APP
+===================================================== */
+
+function showApp(){
+
+    $("loginScreen").style.display = "none";
+
+    $("app").style.display = "block";
+
+    const profile = getProfile();
+
+    $("displayName").value =
+        profile.name || currentUser;
+
+    updateProfile();
+
+    renderBuses(buses);
+
+    renderBookings();
+
+}
+
+
+/* =====================================================
+   AUTO LOGIN
+===================================================== */
+
+if(currentUser){
+
+    showApp();
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+$("loginForm").addEventListener(
+    "submit",
+    function(e){
+
+        e.preventDefault();
+
+        const username =
+            $("loginUser").value.trim();
+
+        const password =
+            $("loginPass").value;
+
+        if(!username || !password){
+
+            toast("Enter username and password");
+
+            return;
+
+        }
+
+        currentUser = username;
+
+        localStorage.setItem(
+            "flashbus_user",
+            currentUser
+        );
+
+        showApp();
+
+        toast(
+            "Welcome to FlashBus, " +
+            currentUser + "!"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+$("logoutBtn").onclick = function(){
+
+    localStorage.removeItem(
+        "flashbus_user"
+    );
+
+    currentUser = "";
+
+    $("app").style.display = "none";
+
+    $("loginScreen").style.display = "grid";
+
+    $("loginPass").value = "";
+
+};
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+document
+.querySelectorAll(".nav-btn[data-page]")
+.forEach(function(btn){
+
+    btn.onclick = function(){
+
+        document
+        .querySelectorAll(".nav-btn")
+        .forEach(function(x){
+
+            x.classList.remove("active");
+
+        });
+
+        btn.classList.add("active");
+
+        document
+        .querySelectorAll(".page")
+        .forEach(function(x){
+
+            x.classList.remove("active");
+
+        });
+
+        $(btn.dataset.page + "Page")
+        .classList.add("active");
+
+        if(
+            btn.dataset.page === "bookings"
+        ){
+
+            renderBookings();
+
+        }
+
+    };
+
+});
+
+
+/* =====================================================
+   SWAP
+===================================================== */
+
+$("swapBtn").onclick = function(){
+
+    const from =
+        $("fromCity").value;
+
+    $("fromCity").value =
+        $("toCity").value;
+
+    $("toCity").value =
+        from;
+
+};
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+$("searchBtn").onclick = function(){
+
+    const from =
+        $("fromCity").value.trim();
+
+    const to =
+        $("toCity").value.trim();
+
+    if(!from || !to){
+
+        toast(
+            "Enter From and To cities"
+        );
+
+        return;
+
+    }
+
+    const date =
+        $("travelDate").value;
+
+    const result =
+        buses.filter(function(bus){
+
+            return (
+                bus.from.toLowerCase() ===
+                from.toLowerCase()
+                &&
+                bus.to.toLowerCase() ===
+                to.toLowerCase()
+            );
+
+        });
+
+    $("resultsTitle").textContent =
+        "Buses: " + from + " → " + to;
+
+    $("resultCount").textContent =
+        result.length + " found";
+
+    renderBuses(result,date);
+
+};
+
+
+/* =====================================================
+   RENDER BUSES
+===================================================== */
+
+function renderBuses(list,date){
+
+    const el = $("busList");
+
+    if(!list.length){
+
+        el.innerHTML = `
+            <div class="empty glass">
+                🚌<br><br>
+                No buses found for this route.
+                <br>
+                Try another city pair.
+            </div>
+        `;
+
+        return;
+
+    }
+
+    el.innerHTML =
+        list.map(function(bus){
+
+            return `
+
+            <div class="bus-card glass">
+
+                <div>
+
+                    <div class="bus-name">
+                        ${bus.name}
+                    </div>
+
+                    <div class="bus-type">
+                        ${bus.type}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div class="route">
+                        ${bus.depart}
+                        →
+                        ${bus.arrive}
+                    </div>
+
+                    <div class="time">
+                        ${bus.from}
+                        →
+                        ${bus.to}
+                    </div>
+
+                </div>
+
+
+                <div class="price">
+
+                    ₹${bus.price}
+
+                    <small>
+                        / seat
+                    </small>
+
+                </div>
+
+
+                <button
+                    class="book-btn"
+                    onclick="
+                    openSeats(
+                        ${bus.id},
+                        '${date || $("travelDate").value}'
+                    )">
+
+                    BOOK NOW
+
+                </button>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   BOOKED SEATS
+===================================================== */
+
+function bookedSeatsFor(
+    busId,
+    date
+){
+
+    return getBookings()
+    .filter(function(booking){
+
+        return (
+            booking.busId === busId &&
+            booking.date === date
+        );
+
+    })
+    .flatMap(function(booking){
+
+        return booking.seats || [];
+
+    });
+
+}
+
+
+/* =====================================================
+   OPEN SEATS
+===================================================== */
+
+function openSeats(id,date){
+
+    currentBus =
+        buses.find(function(bus){
+
+            return bus.id === id;
+
+        });
+
+    selectedSeats = [];
+
+    if(!date){
+
+        date = todayISO();
+
+    }
+
+    currentBus.date = date;
+
+    $("selectedBusInfo").textContent =
+        currentBus.name +
+        " • " +
+        currentBus.from +
+        " → " +
+        currentBus.to +
+        " • " +
+        date;
+
+    const booked =
+        bookedSeatsFor(
+            id,
+            date
+        );
+
+    const grid =
+        $("seatGrid");
+
+    grid.innerHTML = "";
+
+    for(
+        let row = 1;
+        row <= 5;
+        row++
+    ){
+
+        const rowElement =
+            document.createElement("div");
+
+        rowElement.className =
+            "seat-row";
+
+        [
+            1,
+            2,
+            null,
+            3,
+            4
+        ].forEach(function(number){
+
+            if(number === null){
+
+                rowElement.appendChild(
+                    document.createElement("div")
+                );
+
+                return;
+
+            }
+
+            const seatNumber =
+                (row - 1) * 4 + number;
+
+            const seatName =
+                "A" + seatNumber;
+
+            const button =
+                document.createElement("button");
+
+            button.className = "seat";
+
+            button.textContent =
+                seatName;
+
+            if(
+                booked.includes(
+                    seatName
+                )
+            ){
+
+                button.classList.add(
+                    "booked"
+                );
+
+            }
+            else{
+
+                button.onclick =
+                    function(){
+
+                        toggleSeat(
+                            seatName,
+                            button
+                        );
+
+                    };
+
+            }
+
+            rowElement.appendChild(
+                button
+            );
+
+        });
+
+        grid.appendChild(
+            rowElement
+        );
+
+    }
+
+    $("seatPrice").textContent =
+        "₹" + currentBus.price;
+
+    updateSeatSummary();
+
+    $("seatModal")
+    .classList.add("show");
+
+}
+
+
+/* =====================================================
+   SELECT SEAT
+===================================================== */
+
+function toggleSeat(
+    seat,
+    button
+){
+
+    if(
+        selectedSeats.includes(seat)
+    ){
+
+        selectedSeats =
+            selectedSeats.filter(
+                function(x){
+
+                    return x !== seat;
+
+                }
+            );
+
+        button.classList.remove(
+            "selected"
+        );
+
+    }
+    else{
+
+        if(
+            selectedSeats.length >= 4
+        ){
+
+            toast(
+                "Maximum 4 seats per booking"
+            );
+
+            return;
+
+        }
+
+        selectedSeats.push(
+            seat
+        );
+
+        button.classList.add(
+            "selected"
+        );
+
+    }
+
+    updateSeatSummary();
+
+}
+
+
+/* =====================================================
+   SEAT SUMMARY
+===================================================== */
+
+function updateSeatSummary(){
+
+    $("selectedSeatsText")
+    .textContent =
+        selectedSeats.length
+        ?
+        selectedSeats.join(", ")
+        :
+        "None";
+
+    const total =
+        selectedSeats.length *
+        (currentBus?.price || 0);
+
+    $("seatTotal").textContent =
+        "₹" + total;
+
+}
+
+
+/* =====================================================
+   CONTINUE
+===================================================== */
+
+$("continuePassenger").onclick =
+function(){
+
+    if(!selectedSeats.length){
+
+        toast(
+            "Please select at least one seat"
+        );
+
+        return;
+
+    }
+
+    $("seatModal")
+    .classList.remove("show");
+
+    $("passengerSummary")
+    .innerHTML = `
+
+        <div class="summary-row">
+            <span>Bus</span>
+            <strong>
+                ${currentBus.name}
+            </strong>
+        </div>
+
+        <div class="summary-row">
+            <span>Route</span>
+            <strong>
+                ${currentBus.from}
+                →
+                ${currentBus.to}
+            </strong>
+        </div>
+
+        <div class="summary-row">
+            <span>Date</span>
+            <strong>
+                ${currentBus.date}
+            </strong>
+        </div>
+
+        <div class="summary-row">
+            <span>Seats</span>
+            <strong>
+                ${selectedSeats.join(", ")}
+            </strong>
+        </div>
+
+        <div class="summary-row total">
+            <span>Total</span>
+            <strong>
+                ₹${selectedSeats.length *
+                    currentBus.price}
+            </strong>
+        </div>
+
+    `;
+
+    $("passengerForm").reset();
+
+    $("passengerModal")
+    .classList.add("show");
+
+};
+
+
+/* =====================================================
+   CONFIRM BOOKING
+===================================================== */
+
+$("passengerForm")
+.addEventListener(
+    "submit",
+    function(e){
+
+        e.preventDefault();
+
+        const phone =
+            $("passPhone")
+            .value
+            .replace(/\D/g,"");
+
+        if(phone.length !== 10){
+
+            toast(
+                "Enter a valid 10-digit phone number"
+            );
+
+            return;
+
+        }
+
+        const booking = {
+
+            ticketNo:
+                "FB" +
+                Date.now()
+                .toString()
+                .slice(-8),
+
+            user:
+                currentUser,
+
+            busId:
+                currentBus.id,
+
+            bus:
+                currentBus.name,
+
+            type:
+                currentBus.type,
+
+            from:
+                currentBus.from,
+
+            to:
+                currentBus.to,
+
+            date:
+                currentBus.date,
+
+            depart:
+                currentBus.depart,
+
+            arrive:
+                currentBus.arrive,
+
+            seats:
+                [...selectedSeats],
+
+            passenger:
+                $("passName")
+                .value
+                .trim(),
+
+            age:
+                $("passAge").value,
+
+            phone:
+                phone,
+
+            gender:
+                $("passGender").value,
+
+            total:
+                selectedSeats.length *
+                currentBus.price
+
+        };
+
+
+        const bookings =
+            getBookings();
+
+        bookings.push(
+            booking
+        );
+
+        saveBookings(
+            bookings
+        );
+
+        currentTicket =
+            booking;
+
+        $("passengerModal")
+        .classList.remove("show");
+
+        showTicket(
+            booking
+        );
+
+        renderBookings();
+
+        toast(
+            "⚡ Booking confirmed!"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   SHOW TICKET
+===================================================== */
+
+function showTicket(booking){
+
+    $("ticketContent")
+    .innerHTML = `
+
+        <div
+            class="ticket"
+            id="printTicket">
+
+            <div class="brand">
+
+                <div class="logo">
+                    ⚡
+                </div>
+
+                <span>
+                    FLASHBUS
+                </span>
+
+            </div>
+
+
+            <div class="ticket-title">
+                E-TICKET • CONFIRMED ✓
+            </div>
+
+
+            <div class="ticket-route">
+                ${booking.from}
+                →
+                ${booking.to}
+            </div>
+
+
+            <div class="ticket-grid">
+
+                <div>
+
+                    <small>
+                        Passenger
+                    </small>
+
+                    <b>
+                        ${booking.passenger}
+                    </b>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Ticket No.
+                    </small>
+
+                    <b>
+                        ${booking.ticketNo}
+                    </b>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Date
+                    </small>
+
+                    <b>
+                        ${booking.date}
+                    </b>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Seats
+                    </small>
+
+                    <b>
+                        ${booking.seats.join(", ")}
+                    </b>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Bus
+                    </small>
+
+                    <b>
+                        ${booking.bus}
+                    </b>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Time
+                    </small>
+
+                    <b>
+                        ${booking.depart}
+                        →
+                        ${booking.arrive}
+                    </b>
+
+                </div>
+
+            </div>
+
+
+            <div class="ticket-footer">
+
+                TOTAL • ₹${booking.total}
+
+            </div>
+
+        </div>
+
+    `;
+
+    $("ticketModal")
+    .classList.add("show");
+
+}
+
+
+/* =====================================================
+   RENDER BOOKINGS
+===================================================== */
+
+function renderBookings(){
+
+    const bookings =
+        getBookings();
+
+    const list =
+        $("bookingList");
+
+    if(!bookings.length){
+
+        list.innerHTML = `
+
+            <div class="empty glass">
+
+                🎫<br><br>
+
+                No bookings yet.
+
+                <br><br>
+
+                Search for a bus and
+                make your first booking.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        [...bookings]
+        .reverse()
+        .map(function(booking){
+
+            return `
+
+            <div
+                class="booking-card glass">
+
+                <div>
+
+                    <div class="bus-name">
+                        ${booking.bus}
+                    </div>
+
+                    <div class="bus-type">
+                        ${booking.from}
+                        →
+                        ${booking.to}
+                    </div>
+
+                    <div class="time">
+
+                        ${booking.date}
+
+                        • Seat:
+                        ${booking.seats.join(", ")}
+
+                        • ₹${booking.total}
+
+                    </div>
+
+                </div>
+
+
+                <div class="booking-actions">
+
+                    <button
+                        class="secondary"
+                        onclick="
+                        viewBooking(
+                            '${booking.ticketNo}'
+                        )">
+
+                        🎫 View Ticket
+
+                    </button>
+
+
+                    <button
+                        class="secondary danger"
+                        onclick="
+                        cancelBooking(
+                            '${booking.ticketNo}'
+                        )">
+
+                        Cancel
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   VIEW BOOKING
+===================================================== */
+
+function viewBooking(ticketNo){
+
+    const booking =
+        getBookings()
+        .find(function(x){
+
+            return x.ticketNo === ticketNo;
+
+        });
+
+    if(booking){
+
+        currentTicket =
+            booking;
+
+        showTicket(
+            booking
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CANCEL BOOKING
+===================================================== */
+
+function cancelBooking(ticketNo){
+
+    if(
+        !confirm(
+            "Cancel this booking?"
+        )
+    ){
+
+        return;
+
+    }
+
+    const updated =
+        getBookings()
+        .filter(function(x){
+
+            return x.ticketNo !== ticketNo;
+
+        });
+
+    saveBookings(
+        updated
+    );
+
+    renderBookings();
+
+    toast(
+        "Booking cancelled"
+    );
+
+}
+
+
+/* =====================================================
+   CLOSE MODALS
+===================================================== */
+
+document
+.querySelectorAll(".close")
+.forEach(function(button){
+
+    button.onclick =
+        function(){
+
+            $(button.dataset.close)
+            .classList.remove(
+                "show"
+            );
+
+        };
+
+});
+
+
+[
+    "seatModal",
+    "passengerModal",
+    "ticketModal"
+]
+.forEach(function(id){
+
+    $(id).addEventListener(
+        "click",
+        function(e){
+
+            if(
+                e.target.id === id
+            ){
+
+                $(id)
+                .classList.remove(
+                    "show"
+                );
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
+function updateProfile(){
+
+    const profile =
+        getProfile();
+
+    const name =
+        profile.name ||
+        currentUser;
+
+    $("profileName")
+    .textContent =
+        name;
+
+    $("profileInfo")
+    .textContent =
+        "Username: " +
+        currentUser;
+
+    $("avatar")
+    .textContent =
+        name
+        .charAt(0)
+        .toUpperCase();
+
+}
+
+
+$("saveProfile").onclick =
+function(){
+
+    const name =
+        $("displayName")
+        .value
+        .trim() ||
+        currentUser;
+
+    localStorage.setItem(
+
+        "flashbus_profile_" +
+        currentUser,
+
+        JSON.stringify({
+            name:name
+        })
+
+    );
+
+    updateProfile();
+
+    toast(
+        "Profile saved"
+    );
+
+};
+
+
+/* =====================================================
+   DOWNLOAD TICKET
+===================================================== */
+
+$("downloadTicket").onclick =
+function(){
+
+    if(!currentTicket){
+
+        return;
+
+    }
+
+    const booking =
+        currentTicket;
+
+
+    const ticketText =
+
+`================================
+        ⚡ FLASHBUS
+          E-TICKET
+================================
+
+STATUS: CONFIRMED
+
+Ticket No:
+${booking.ticketNo}
+
+Passenger:
+${booking.passenger}
+
+Age:
+${booking.age}
+
+Phone:
+${booking.phone}
+
+--------------------------------
+
+FROM:
+${booking.from}
+
+TO:
+${booking.to}
+
+DATE:
+${booking.date}
+
+BUS:
+${booking.bus}
+
+TYPE:
+${booking.type}
+
+TIME:
+${booking.depart} → ${booking.arrive}
+
+SEAT:
+${booking.seats.join(", ")}
+
+--------------------------------
+
+TOTAL:
+₹${booking.total}
+
+================================
+     BOOK FAST. TRAVEL EASY.
+================================`;
+
+
+    const blob =
+        new Blob(
+            [ticketText],
+            {
+                type:"text/plain"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+    link.href =
+        url;
+
+    link.download =
+        booking.ticketNo +
+        ".txt";
+
+    link.click();
+
+    URL.revokeObjectURL(
+        url
+    );
+
+    toast(
+        "Ticket downloaded"
+    );
+
+};
+
+
+/* =====================================================
+   EXPOSE FUNCTIONS
+===================================================== */
+
+window.openSeats =
+    openSeats;
+
+window.viewBooking =
+    viewBooking;
+
+window.cancelBooking =
+    cancelBooking;
+
+</script>
+
+</body>
+</html>
